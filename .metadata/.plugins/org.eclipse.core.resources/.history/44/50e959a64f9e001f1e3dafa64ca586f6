@@ -1,0 +1,53 @@
+package com.example.demo.api.controller;
+
+import com.example.demo.api.model.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
+
+/*
+ * 	One point for every alphanumeric character in the retailer name. - done
+	50 points if the total is a round dollar amount with no cents.
+	25 points if the total is a multiple of 0.25.
+	5 points for every two items on the receipt.
+	If the trimmed length of the item description is a multiple of 3, multiply the price by 0.2 and round up to the nearest integer. The result is the number of points earned.
+	6 points if the day in the purchase date is odd.
+	10 points if the time of purchase is after 2:00pm and before 4:00pm.
+ * */
+
+@RestController
+public class ReceiptController {
+
+	@PostMapping("/receipts/process")
+	public String readReceipt(@RequestBody Receipt receipt) {
+		int retailerPoint = readRetailer(receipt.getRetailer());
+		System.out.println(retailerPoint);
+		int roundDollar = readTotal(receipt.getTotal());
+		System.out.println(roundDollar);
+		
+		
+		return "Total: "+ retailerPoint + roundDollar;
+	}
+	
+	
+	public int readRetailer(String retailer) {
+		String alphaNumeric = retailer.replaceAll("[^a-zA-Z0-9]", "");
+		int length = alphaNumeric.length();
+		return length;
+	}
+	
+	public int readTotal(double total) {
+		int result = 0;
+		System.out.println("total: " + total);
+		if (total == (int)total) {
+			result += 50;
+		}
+		
+		if (total % 0.25 == 0) {
+			result += 25;
+		}
+		
+		return result;
+	}
+}
